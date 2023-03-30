@@ -1,4 +1,5 @@
 ﻿using SX.Math;
+using SX.Shared;
 
 namespace SX.Win.Tools.Forms
 {
@@ -16,9 +17,16 @@ namespace SX.Win.Tools.Forms
 
         private void buttonCalculate_Click(object sender, EventArgs e)
         {
-            var expression = new LexemExpression(this.textBoxExpression.Text);
-            var result = expression.Calculate();
-            this.resultsPane.Log($"{(result?.Value ?? "NULL")} \t = {this.textBoxExpression.Text}");
+            try
+            {
+                var expression = new LexemExpression(this.textBoxExpression.Text);
+                var result = expression.Calculate();
+                this.resultsPane.Log($"{(result?.Value ?? "NULL")} \t = {this.textBoxExpression.Text}");
+            }
+            catch (Exception ex)
+            {
+                this.resultsPane.Log(Helpers.GetErrorMessage(ex));
+            }
         }
 
     }

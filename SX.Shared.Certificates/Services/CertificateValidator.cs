@@ -29,6 +29,22 @@ namespace SX.Shared.Certificates.Services
             {
                 bool isVerified = certificate.X509.Verify();
                 addLog(isVerified, $"Базовая проверка", isVerified ? "сертификат действителен и не отозван (прошел стандартную проверку)" : "сертификат НЕ валиден (НЕ прошел стандартную проверку)");
+
+                X509Chain chain = new X509Chain();
+
+                try
+                {
+                    var chainBuilt = chain.Build(certificate.X509);
+                    addLog(false, "Chain", string.Format("Chain building status: {0}", chainBuilt));
+
+                    if (chainBuilt == false)
+                        foreach (X509ChainStatus chainStatus in chain.ChainStatus)
+                            addLog(false, "ChainDetail", string.Format("Chain error: {0} {1}", chainStatus.Status, chainStatus.StatusInformation));
+                }
+                catch (Exception ex)
+                {
+                    addLog(false, "ERROR", ex.ToString());
+                }
             }
 
             // проверка периода действия сертификата
